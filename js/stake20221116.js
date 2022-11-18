@@ -274,7 +274,7 @@ export async function checkCitadel(citadelId) { // Does not require a connected 
     headers: { }
   };
 
-  axios(config)
+  await axios(config)
     .then(response => {
       response.data.metadata.attributes.forEach(i => {showSuccess(`${i.trait_type.toString().toLowerCase()}: ${i.value.toString().toLowerCase()}`)});
     })
@@ -337,7 +337,7 @@ export async function checkWallet(walletAddress = null) { // Does not (always) r
   let pilots = [];
   let citadels = [];
 
-  axios
+  await axios
     .request(options)
     .then(function (response) {
       response.data.ownedNfts.forEach((nft) => {
