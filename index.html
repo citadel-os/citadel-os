@@ -29,7 +29,7 @@
         </div>
     </div>
     <div id="wallet_connection"></div>
-    <div id="audio"><span id="controls">&gt;</span>
+    <div id="audio"><span id="play_control">&gt;</span>
         <audio id="th3worm" loop>
             <source src="TH3WORM/supreme_tranquility.mp3" type="audio/wav" data-track-number="1">
             <source src="TH3WORM/are_you_there.mp3" type="audio/wav" data-track-number="2">
@@ -37,18 +37,18 @@
     </div>
     <script src="/js/main20221116.js" type="module"></script>
     <script>
-        document.addEventListener('click', musicPlay);
+        document.getElementById('play_control').addEventListener('click', musicPlay);
         function musicPlay() {
             document.getElementById('th3worm').play();
-            document.removeEventListener('click', musicPlay);
-            document.addEventListener('click', musicPause);
-            document.getElementById('controls').innerHTML = "||";
+            document.getElementById('play_control').removeEventListener('click', musicPlay);
+            document.getElementById('play_control').addEventListener('click', musicPause);
+            document.getElementById('play_control').innerHTML = "||";
         }
         function musicPause() {
             document.getElementById('th3worm').pause();
-            document.removeEventListener('click', musicPause);
-            document.addEventListener('click', musicPlay);
-            document.getElementById('controls').innerHTML = ">";
+            document.getElementById('play_control').removeEventListener('click', musicPause);
+            document.getElementById('play_control').addEventListener('click', musicPlay);
+            document.getElementById('play_control').innerHTML = ">";
         }
     </script>
 </body>
