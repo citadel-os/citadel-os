@@ -1,0 +1,131 @@
+<html>
+<head>
+    <title>MINT CITADEL</title>
+    <link rel="stylesheet" href="css/citadel.css" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/mint.js"></script>
+    <link href="static/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+    <link href="static/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+    <link href="static/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+    <link href="static/site.webmanifest" rel="manifest"/>
+    <link href="static/favicon.ico" rel="shortcut icon"/>
+</head>
+
+<script>
+    async function submitMint() {
+        var msg = document.getElementById("msg");
+        //msg.innerHTML = "You are early. CITADEL genesis minting has not yet opened. We expect the genesis mint to take place in March 2022. Follow <a href=https://www.twitter.com/citadelpm target=_new>CITADEL PM</a> for updates and join our Discord server.";
+        //alert("You are early. CITADEL genesis minting has not yet opened. We expect the genesis mint to take place in March 2022. Follow @citadelpm for updates.");
+        
+        var q = document.getElementById("quantity");
+        var msg = document.getElementById("msg");
+        msg.innerHTML = "minting citadel...";
+        try {
+            var tx = await mint(q.value);
+            msg.innerHTML = "Minting transaction submitted. Please await confirmation. Transaction: " + tx;
+        } catch(err) {
+            msg.innerHTML = err;
+        }
+  
+    }
+
+    async function connectMetamask() {
+        try {
+            const accounts = await getAccounts();
+            if(accounts == null || accounts.length <= 0) {
+                disableMint();
+                alert("please connect metamask");
+            } else {
+                enableMint();
+            }
+        } catch(err) {
+            disableMint();
+            alert("error connecting to metamask. please enable.");
+        }
+    }
+
+    function disableMint() {
+        document.getElementById("quantity").style.display = 'none';
+        document.getElementById("mintBtn").style.display = 'none';
+        document.getElementById("connectBtn").style.display = 'visible';
+    }
+
+    function enableMint() {
+        document.getElementById("quantity").style.display = 'visible';
+        document.getElementById("mintBtn").style.display = 'visible';
+        document.getElementById("connectBtn").style.display = 'none';
+    }
+
+</script>
+
+<body onload="connectMetamask()">
+    <div class="stack" style="--stacks: 3;">
+        <span style="--index: 0;">CITADEL</span>
+        <span style="--index: 1;">CITADEL</span>
+        <span style="--index: 2;">CITADEL</span>
+    </div>
+    <p class="cyberpunk inverse" id="msg">
+        CITADEL is an original play to earn strategy game built on the blockchain. The genesis CITADEL mint is slated for mid-March 2022. Follow <a href="https://www.twitter.com/citadelpm" target=_new>CITADEL PM</a> for game and genesis mint updates.
+    </p>
+    <select name="quantity" id="quantity">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+        <option value="43">43</option>
+        <option value="44">44</option>
+        <option value="45">45</option>
+        <option value="46">46</option>
+        <option value="47">47</option>
+        <option value="48">48</option>
+        <option value="49">49</option>
+        <option value="50">50</option>
+        </select>
+    <button onclick="submitMint()" id="mintBtn">MINT</button>
+
+    <button onclick="connectMetamask()" id="connectBtn">CONNECT</button>
+
+</body>
+</html>

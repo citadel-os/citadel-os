@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CITADEL OS</title>
+    <link rel="stylesheet" href="css/terminal.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <link href="static/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+    <link href="static/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+    <link href="static/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+    <link href="static/site.webmanifest" rel="manifest"/>
+    <link href="static/favicon.ico" rel="shortcut icon"/>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+</head>
+
+<body>
+    <div id="screen" class="crt">
+        <div id="Container">
+            <div id="input">
+                <p id="input_title"></p>
+                <input id="input_source" type="command" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" autofocus>
+            </div>
+            <div id="logger">
+                <div id="wrapper">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="wallet_connection"></div>
+    <div id="audio"><span id="controls">&gt;</span>
+        <audio id="th3worm" loop>
+            <source src="TH3WORM/supreme_tranquility.mp3" type="audio/wav" data-track-number="1">
+            <source src="TH3WORM/are_you_there.mp3" type="audio/wav" data-track-number="2">
+        </audio>
+    </div>
+    <script src="/js/main20221116.js" type="module"></script>
+    <script>
+        document.addEventListener('click', musicPlay);
+        function musicPlay() {
+            document.getElementById('th3worm').play();
+            document.removeEventListener('click', musicPlay);
+            document.addEventListener('click', musicPause);
+            document.getElementById('controls').innerHTML = "||";
+        }
+        function musicPause() {
+            document.getElementById('th3worm').pause();
+            document.removeEventListener('click', musicPause);
+            document.addEventListener('click', musicPlay);
+            document.getElementById('controls').innerHTML = ">";
+        }
+    </script>
+</body>
+
+</html>
