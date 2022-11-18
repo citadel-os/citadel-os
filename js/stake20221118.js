@@ -1,9 +1,9 @@
-import * as spinner from './spinner20221116.js';
-import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221116.js';
+import * as spinner from './spinner20221118.js';
+import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221118.js';
 
-import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221116.js';
-import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221116.js';
-import { typeWriter } from './terminal20221116.js';
+import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221118.js';
+import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221118.js';
+import { typeWriter } from './terminal20221118.js';
 
 //import axios from 'axios';
 
