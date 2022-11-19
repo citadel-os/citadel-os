@@ -1,9 +1,9 @@
-import * as spinner from './spinner20221118.js';
-import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221118.js';
+import * as spinner from './spinner20221119.js';
+import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221119.js';
 
-import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221118.js';
-import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221118.js';
-import { typeWriter } from './terminal20221118.js';
+import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221119.js';
+import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221119.js';
+import { typeWriter } from './terminal20221119.js';
 
 //import axios from 'axios';
 
@@ -251,6 +251,9 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   let calculatedDK = Number(((currBlock.timestamp < periodFinish ? currBlock.timestamp : periodFinish) - lastUpdate) * amtStaked * rewardsPerHour / 3600)
   calculatedDK = (calculatedDK?(calculatedDK/dkScale):0);
 
+  let approvedDrakma = await citadelDrakma.methods.allowance(useWallet,CITADEL_PILOT).call().then((dk) => {return dk;});
+  approvedDrakma = (approvedDrakma?(approvedDrakma/dkScale):0);
+
   spinner.stopSpinner();
 
   console.debug(`unclaimed: ${unclaimedDK}`);
@@ -258,6 +261,7 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   
   await typeWriter(`wallet: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(dk)} drakma`);
   await typeWriter(`unclaimed: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(unclaimedDK + calculatedDK)} drakma`);
+  await typeWriter(`approval: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(approvedDrakma)} dramka`);
 
   return;
 }
