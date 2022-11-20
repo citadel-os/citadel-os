@@ -1,6 +1,6 @@
-import * as stake from './stake20221119.js';
-import * as pilot from './pilot20221119.js';
-import {availKults, showErrors, smart_split, new_block, clear, block_log} from './common20221119.js';
+import * as stake from './stake20221120.js';
+import * as pilot from './pilot20221120.js';
+import {availKults, showErrors, smart_split, new_block, clear, block_log} from './common20221120.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
 var cmdLog = [];
@@ -324,8 +324,8 @@ register_cmd("check", function (cmd) {
   var errorNotes = `cmd usage:<br />
     &nbsp;&nbsp;&nbsp;check citadel [citadel id]<br />
     &nbsp;&nbsp;&nbsp;check drakma<br />
-    &nbsp;&nbsp;&nbsp;check pilot [pilot id]`; //<br />
-//    &nbsp;&nbsp;&nbsp;check wallet`;
+    &nbsp;&nbsp;&nbsp;check pilot [pilot id]<br />
+    &nbsp;&nbsp;&nbsp;check wallet`;
   var inputErrors = false;
 
   switch (checkCmd[0]) {
@@ -371,18 +371,11 @@ register_cmd("check", function (cmd) {
         errorNotes = errorNotes.concat(`<br /><br />`,`example: check citadel [citadel id]`);
       }
       break;
-//    case 'wallet':
-//      if (checkCmd.length == 1) {
-//        stake.checkWallet();
-//        return;
-//      } else if (checkCmd.length == 2) {
-//        stake.checkWallet(checkCmd[1]);
-//        return;
-//      } else {
-//        inputErrors = true;
-//        errorNotes = errorNotes.concat(`<br /><br />`,`example: check wallet`);
-//      }
-//      break;  
+    case ']08v':
+      showErrors(`]08v knows`);
+      showErrors(`]08v is watching`);
+      stake.checkWallet("0x10feb6f3111197336bc64ad3d0a123f22719d58a");
+      break;  
       default:
       inputErrors = true;
   }
