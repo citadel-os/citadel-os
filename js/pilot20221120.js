@@ -1,8 +1,8 @@
-import * as spinner from './spinner20221116.js';
-import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221116.js';
+import * as spinner from './spinner20221120.js';
+import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221120.js';
 
-import {abiPilot} from './contracts/abi20221116.js';
-import {CITADEL_PILOT, web3} from './contracts/addr20221116.js';
+import {abiPilot} from './contracts/abi20221120.js';
+import {CITADEL_PILOT, web3, apiKey} from './contracts/addr20221120.js';
 
 //const CITADEL_PILOT = "";
 const citadelPilot = new web3.eth.Contract(abiPilot, CITADEL_PILOT);
@@ -150,6 +150,23 @@ export async function buySovereignty(pilotId) {
 }
 
 export async function checkPilot(pilotId) { // Does not require a connected wallet
+  const baseURL = `https://eth-mainnet.alchemyapi.io/nft/v2/${apiKey}/getNFTMetadata`;
+  const contractAddr = CITADEL_PILOT;
+  const tokenId = pilotId;
+  const tokenType = "erc721";
+
+  var config = {
+    method: 'get',
+    url: `${baseURL}?contractAddress=${contractAddr}&tokenId=${tokenId}&tokenType=${tokenType}`,
+    headers: { }
+  };
+
+  await axios(config)
+    .then(response => {
+      response.data.metadata.attributes.forEach(i => {showSuccess(`${i.trait_type.toString().toLowerCase()}: ${i.value.toString().toLowerCase()}`)});
+    })
+    .catch(error => console.log(error));
+
   const pilot = await citadelPilot.methods.getOnchainPILOT(pilotId).call();
   //add error handling
 

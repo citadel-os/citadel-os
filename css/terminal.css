@@ -103,6 +103,14 @@ div#audio {
   margin:0 2rem 1rem 0;
 }
 
+div#audio #play_control {
+  text-align:center;
+  display:inline-block;
+  padding:1rem;
+  min-width:4rem;
+  cursor:pointer;
+}
+
 .error {
     color: orange;
 }
