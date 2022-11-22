@@ -1,6 +1,6 @@
-import * as stake from './stake20221121.js';
-import * as pilot from './pilot20221121.js';
-import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20221121.js';
+import * as stake from './stake20221122.js';
+import * as pilot from './pilot20221122.js';
+import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20221122.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
 var cmdLog = [];

@@ -1,4 +1,4 @@
-const useTestnet = false; // testnet OR mainnet
+const useTestnet = true; // testnet OR mainnet
 
 export let CITADEL_NFT;
 export let CITADEL_EXORDIUM;
@@ -9,6 +9,7 @@ export let SOVEREIGN_COLLECTIVE;
 export let web3;
 export let etherscan;
 export let apiKey;
+export let alchemy;
 
 if (useTestnet) {
   //  ----- goerli -----
@@ -19,7 +20,8 @@ if (useTestnet) {
   CITADEL_BATCH = "0x2d36AfAa69b721240D70D65801F164826B983B35";
   SOVEREIGN_COLLECTIVE = "0x6825e0B01629bB940170c3AE0Dbe1eEAFE7E7240";
   apiKey = "IfQOw2VsmU96YhYUF2ydine8Ah1l3mVl";
-  web3 = new Web3(`https://eth-goerli.g.alchemy.com/v2/${apiKey}`);
+  alchemy = "eth-goerli.g.alchemy.com"
+  web3 = new Web3(`https://${alchemy}/v2/${apiKey}`);
   etherscan = "goerli.etherscan.io";
 } else {
   //  ----- mainnet -----
@@ -30,7 +32,8 @@ if (useTestnet) {
   CITADEL_BATCH = "";
   SOVEREIGN_COLLECTIVE = "";
   apiKey = "UcDDOYtVoT89tLIOD4POxzrhfvQAiHYO";
-  web3 = new Web3(`https://eth-mainnet.alchemyapi.io/v2/${apiKey}`);
+  alchemy = "eth-mainnet.alchemyapi.io"
+  web3 = new Web3(`https://${alchemy}/v2/${apiKey}`);
   etherscan = "etherscan.io";
 }
 
