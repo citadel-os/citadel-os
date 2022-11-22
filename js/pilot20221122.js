@@ -1,5 +1,5 @@
 import * as spinner from './spinner20221122.js';
-import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221122.js';
+import {availKults, showErrors, showSuccess, getAccounts, getGasPrice, dkScale} from './common20221122.js';
 
 import {abiPilot, abiSovereignCollective} from './contracts/abi20221122.js';
 import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3, apiKey, alchemy} from './contracts/addr20221122.js';
@@ -274,7 +274,10 @@ export async function claimSovereign(sovereignId) {
     throw new Error("connect to metamask");
   }
 
-  const estimatedGas = await sovereignCollective.methods.claimSovereign(sovereignId).estimateGas({from: accounts[0]});
+  const estimatedGas = await sovereignCollective.methods.claimSovereign(sovereignId).estimateGas({from: accounts[0]}).catch(err => {showErrors(err);return 'error';});
+  if (estimatedGas && estimatedGas == 'error') {
+    return;
+  }
 
   const tx = {
       'from': accounts[0],
@@ -285,6 +288,7 @@ export async function claimSovereign(sovereignId) {
   };
 
   spinner.startSpinner();
+  await sovereignCollective.methods.getClaimAmount().call().then((out) => {showSuccess(`claiming ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(out / dkScale)} drakma`);});
   const txHash = await window.ethereum.request({
     method: 'eth_sendTransaction',
     params: [tx],

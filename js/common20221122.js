@@ -120,3 +120,5 @@ function truncAddr(addr, limit) {
 }
 
 export const availKults = ['kult geheim','d0d engel','stalkroth','kult gor','klinge','dalk stracht','ys diaboli','grater djevel'];
+export const dkScale = 1000000000000000000;
+

@@ -1,5 +1,5 @@
 import * as spinner from './spinner20221122.js';
-import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221122.js';
+import {showErrors, showSuccess, getAccounts, getGasPrice, dkScale} from './common20221122.js';
 
 import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221122.js';
 import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey, alchemy} from './contracts/addr20221122.js';
@@ -235,7 +235,6 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
 
   const rewardsPerHour = 166000000000000000000; //166 DK base / hr
   const periodFinish = 1674943200; //JAN 28 2023, 2PM PT   
-  const dkScale = 1000000000000000000;
   let dk = await citadelDrakma.methods.balanceOf(useWallet).call().then(Number());
   dk = (dk?(dk/dkScale):0);
 
