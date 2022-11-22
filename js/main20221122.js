@@ -1,5 +1,5 @@
-import * as terminal from './terminal20221120.js';
-import { new_block, block_log, updateConnectionStatus } from './common20221120.js';
+import * as terminal from './terminal20221122.js';
+import { new_block, block_log, updateConnectionStatus } from './common20221122.js';
 
 document.getElementById("input_title").innerText = "citadel os > ";
 

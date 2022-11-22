@@ -1,4 +1,4 @@
-import {web3, etherscan} from './contracts/addr20221120.js';
+import {web3, etherscan} from './contracts/addr20221122.js';
 
 //Global support functions
 export function showErrors(message) {
@@ -108,6 +108,8 @@ export async function updateConnectionStatus() {
       });
   }
 }
+
+export const ofInterest = ']08v';
 
 function truncAddr(addr, limit) {
   if (addr.length <= (limit * 2)) {

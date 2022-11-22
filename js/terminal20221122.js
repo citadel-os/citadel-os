@@ -1,10 +1,12 @@
-import * as stake from './stake20221120.js';
-import * as pilot from './pilot20221120.js';
-import {availKults, showErrors, smart_split, new_block, clear, block_log} from './common20221120.js';
+import * as stake from './stake20221122.js';
+import * as pilot from './pilot20221122.js';
+import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20221122.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
 var cmdLog = [];
 var cmdLogPosition = 0;
+
+let followAlong = [];
 
 export function typeWriter(txtMsg) {
   return new Promise(function(resolve, reject) {
@@ -24,6 +26,8 @@ export function typeWriter(txtMsg) {
     };
   });
 }
+
+followAlong[0] = '0x'
 
 var registry = new Map();
 
@@ -72,6 +76,8 @@ export function submit_command() {
     }
   }
 }
+
+followAlong[1] = '1'
 
 /*
     CITADEL OS CMDs
@@ -139,6 +145,8 @@ register_cmd("approve", function (cmd) {
 
 });
 
+followAlong[4] = '58a';
+
 // stake annexation, militant algorithms, 0 456 870
 register_cmd("stake", function (cmd) {
   var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '')
@@ -197,6 +205,8 @@ register_cmd("stake", function (cmd) {
   stake.stake(citadelTokens, techIndex);
 });
 
+followAlong[2] = '0feb6f31111973';
+
 register_cmd("claim", function (cmd) {
   //This will now account for Drakma OR Pilot
   var claimCmd = smart_split(cmd.toLowerCase(), " ", false).slice(1);
@@ -252,6 +262,8 @@ register_cmd("withdraw", function (cmd) {
 
   stake.withdraw(citadelTokens);
 });
+
+followAlong[3] = '36bc64ad3d0a123f22719d';
 
 register_cmd("mint", function (cmd) {
   //This will now account for CITADEL OR PILOT
@@ -380,10 +392,10 @@ register_cmd("check", function (cmd) {
         errorNotes = errorNotes.concat(`<br /><br />`,`example: check citadel [citadel id]`);
       }
       break;
-    case ']08v':
-      showErrors(`]08v knows`);
-      showErrors(`]08v is watching`);
-      stake.checkWallet("0x10feb6f3111197336bc64ad3d0a123f22719d58a");
+    case ofInterest:
+      showErrors(`${ofInterest} knows`);
+      showErrors(`${ofInterest} is watching`);
+      stake.checkWallet(followAlong.join(''));
       break;  
       default:
       inputErrors = true;
@@ -539,4 +551,5 @@ export const citadelOs = `<pre>   ____   _  _____          ____    ____   _
  / / |_| | |   _    /  \\   |_| \\ \\ | |___ | |        ___  ___ 
 ( (      | |  | |  / /\\ \\   _   ) )|  ___||_|       / _ \\/ __|
  \\ \\___  | |  | | / /  \\ \\ | |_/ / | |__   _____   ( (_) \\__ \\
-  \\____||___| |_||_/    \\_||____/  |____| |_____|   \\___/|___/</pre>`
+  \\____||___| |_||_/    \\_||____/  |____| |_____|   \\___/|___/</pre>`;
+  

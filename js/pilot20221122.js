@@ -1,8 +1,8 @@
-import * as spinner from './spinner20221120.js';
-import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221120.js';
+import * as spinner from './spinner20221122.js';
+import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221122.js';
 
-import {abiPilot, abiSovereignCollective} from './contracts/abi20221120.js';
-import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3, apiKey} from './contracts/addr20221120.js';
+import {abiPilot, abiSovereignCollective} from './contracts/abi20221122.js';
+import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3, apiKey, alchemy} from './contracts/addr20221122.js';
 
 //const CITADEL_PILOT = "";
 const citadelPilot = new web3.eth.Contract(abiPilot, CITADEL_PILOT);
@@ -151,7 +151,7 @@ export async function buySovereignty(pilotId) {
 }
 
 export async function checkPilot(pilotId) { // Does not require a connected wallet
-  const baseURL = `https://eth-mainnet.alchemyapi.io/nft/v2/${apiKey}/getNFTMetadata`;
+  const baseURL = `https://${alchemy}/nft/v2/${apiKey}/getNFTMetadata`;
   const contractAddr = CITADEL_PILOT;
   const tokenId = pilotId;
   const tokenType = "erc721";
@@ -183,6 +183,13 @@ export async function checkPilot(pilotId) { // Does not require a connected wall
     showSuccess(`level: ${pilot[1]}`);
   }
   
+  const owner = await citadelPilot.methods.ownerOf(pilotId).call()
+  .then( async (result) => {
+      showSuccess(`owner: ${result}`);  //  <<<< Make this a link to `check wallet`
+  },error => {
+    showErrors(error.message)
+  });
+
   return;
 }
 
