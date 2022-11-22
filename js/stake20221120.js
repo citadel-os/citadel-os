@@ -1,9 +1,9 @@
-import * as spinner from './spinner20221116.js';
-import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221116.js';
+import * as spinner from './spinner20221120.js';
+import {showErrors, showSuccess, getAccounts, getGasPrice} from './common20221120.js';
 
-import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221116.js';
-import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221116.js';
-import { typeWriter } from './terminal20221116.js';
+import {abiExordium, abiNFT, abiDrakma, abiPilot} from './contracts/abi20221120.js';
+import {CITADEL_NFT, CITADEL_EXORDIUM, CITADEL_DRAKMA, web3, CITADEL_PILOT, apiKey} from './contracts/addr20221120.js';
+import { typeWriter } from './terminal20221120.js';
 
 //import axios from 'axios';
 
@@ -251,6 +251,9 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   let calculatedDK = Number(((currBlock.timestamp < periodFinish ? currBlock.timestamp : periodFinish) - lastUpdate) * amtStaked * rewardsPerHour / 3600)
   calculatedDK = (calculatedDK?(calculatedDK/dkScale):0);
 
+  let approvedDrakma = await citadelDrakma.methods.allowance(useWallet,CITADEL_PILOT).call().then((dk) => {return dk;});
+  approvedDrakma = (approvedDrakma?(approvedDrakma/dkScale):0);
+
   spinner.stopSpinner();
 
   console.debug(`unclaimed: ${unclaimedDK}`);
@@ -258,6 +261,7 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   
   await typeWriter(`wallet: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(dk)} drakma`);
   await typeWriter(`unclaimed: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(unclaimedDK + calculatedDK)} drakma`);
+  await typeWriter(`approval: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(approvedDrakma)} dramka`);
 
   return;
 }
@@ -274,7 +278,7 @@ export async function checkCitadel(citadelId) { // Does not require a connected 
     headers: { }
   };
 
-  axios(config)
+  await axios(config)
     .then(response => {
       response.data.metadata.attributes.forEach(i => {showSuccess(`${i.trait_type.toString().toLowerCase()}: ${i.value.toString().toLowerCase()}`)});
     })
@@ -337,7 +341,7 @@ export async function checkWallet(walletAddress = null) { // Does not (always) r
   let pilots = [];
   let citadels = [];
 
-  axios
+  await axios
     .request(options)
     .then(function (response) {
       response.data.ownedNfts.forEach((nft) => {
