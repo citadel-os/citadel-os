@@ -1,11 +1,12 @@
 import * as spinner from './spinner20221116.js';
 import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221116.js';
 
-import {abiPilot} from './contracts/abi20221116.js';
-import {CITADEL_PILOT, web3} from './contracts/addr20221116.js';
+import {abiPilot, abiSovereignCollective } from './contracts/abi20221116.js';
+import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3} from './contracts/addr20221116.js';
 
 //const CITADEL_PILOT = "";
 const citadelPilot = new web3.eth.Contract(abiPilot, CITADEL_PILOT);
+const sovereignCollective = new web3.eth.Contract(abiSovereignCollective, SOVEREIGN_COLLECTIVE);
 
 export async function claimPilot(citadel) {
   var gasPrice = await getGasPrice();
@@ -237,6 +238,40 @@ export async function bribeKult(sovereignId,kult) {
     }).
   finally(() => {spinner.stopSpinner()});
   
+  return txHash;
+}
+
+export async function claimSovereign(sovereignId) {
+  var gasPrice = await getGasPrice();
+  gasPrice = Math.trunc(gasPrice * 1.5);
+
+  const accounts = await getAccounts();
+  if(accounts.length <= 0) {
+    throw new Error("connect to metamask");
+  }
+
+  const estimatedGas = await sovereignCollective.methods.claimSovereign(sovereignId).estimateGas({from: accounts[0]});
+
+  const tx = {
+      'from': accounts[0],
+      'to': SOVEREIGN_COLLECTIVE,
+      'data': sovereignCollective.methods.claimSovereign(sovereignId).encodeABI(),
+      'gas': web3.utils.toHex(estimatedGas),
+      'gasPrice': web3.utils.toHex(gasPrice)
+  };
+
+  spinner.startSpinner();
+  const txHash = await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [tx],
+  }).then(result => {
+    showSuccess('claim sovereign tx complete',result)
+  },error => {
+    showErrors(error.message)
+  }).finally(() => {
+    spinner.stopSpinner()
+  });
+
   return txHash;
 }
 
