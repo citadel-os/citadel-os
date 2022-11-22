@@ -210,7 +210,7 @@ followAlong[2] = '0feb6f31111973';
 register_cmd("claim", function (cmd) {
   //This will now account for Drakma OR Pilot
   var claimCmd = smart_split(cmd.toLowerCase(), " ", false).slice(1);
-  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]';
+  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
   var inputErrors = false;
 
   switch (claimCmd[0]) {
@@ -230,6 +230,15 @@ register_cmd("claim", function (cmd) {
       } else {
         inputErrors = true;
         errorNotes = errorNotes.concat(`<br /><br />`,`example: claim pilot 123`);
+      }
+      break;
+    case 'sovereign':
+      if (claimCmd.length == 2 && !isNaN(claimCmd[1])) {
+        pilot.claimSovereign(claimCmd[1]);
+        return;
+      } else {
+        inputErrors = true;
+        errorNotes = errorNotes.concat(`<br /><br />`,`example: claim sovereign 123`);
       }
       break;
     default:
