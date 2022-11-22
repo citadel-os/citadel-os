@@ -1,8 +1,8 @@
 import * as spinner from './spinner20221120.js';
 import {availKults, showErrors, showSuccess, getAccounts, getGasPrice} from './common20221120.js';
 
-import {abiPilot, abiSovereignCollective } from './contracts/abi20221116.js';
-import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3} from './contracts/addr20221116.js';
+import {abiPilot, abiSovereignCollective } from './contracts/abi20221120.js';
+import {CITADEL_PILOT, SOVEREIGN_COLLECTIVE, web3} from './contracts/addr20221120.js';
 
 //const CITADEL_PILOT = "";
 const citadelPilot = new web3.eth.Contract(abiPilot, CITADEL_PILOT);

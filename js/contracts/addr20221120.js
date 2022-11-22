@@ -1,4 +1,4 @@
-const useTestnet = true; // testnet OR mainnet
+const useTestnet = false; // testnet OR mainnet
 
 export let CITADEL_NFT;
 export let CITADEL_EXORDIUM;
