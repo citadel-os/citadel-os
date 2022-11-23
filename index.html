@@ -29,28 +29,16 @@
         </div>
     </div>
     <div id="wallet_connection"></div>
-    <div id="audio"><span id="play_control">&gt;</span>
-        <audio id="th3worm" loop>
-            <source src="TH3WORM/supreme_tranquility.mp3" type="audio/wav" data-track-number="1">
-            <source src="TH3WORM/are_you_there.mp3" type="audio/wav" data-track-number="2">
+    <div id="audio">
+        <span id="prev_control">|&lt;</span>
+        <span id="play_control">&gt;</span>
+        <span id="next_control">&gt;|</span>
+        <audio id="th3worm">
+            <source type="audio/wav">
         </audio>
     </div>
-    <script src="/js/main20221122.js" type="module"></script>
-    <script>
-        document.getElementById('play_control').addEventListener('click', musicPlay);
-        function musicPlay() {
-            document.getElementById('th3worm').play();
-            document.getElementById('play_control').removeEventListener('click', musicPlay);
-            document.getElementById('play_control').addEventListener('click', musicPause);
-            document.getElementById('play_control').innerHTML = "||";
-        }
-        function musicPause() {
-            document.getElementById('th3worm').pause();
-            document.getElementById('play_control').removeEventListener('click', musicPause);
-            document.getElementById('play_control').addEventListener('click', musicPlay);
-            document.getElementById('play_control').innerHTML = ">";
-        }
-    </script>
+    <script src="/js/main20221123.js" type="module"></script>
+    <script src="/js/th3worm20221123.js" type="module"></script>
 </body>
 
 </html>
