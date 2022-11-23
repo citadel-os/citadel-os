@@ -3,13 +3,13 @@ document.getElementById('play_control').addEventListener('click', musicPlay);
 document.getElementById('next_control').addEventListener('click', nextTrack);
 document.getElementById('prev_control').addEventListener('click', prevTrack);
 const playlist = [
-    {src: 'TH3WORM/supreme_tranquility.mp3'},
+    {src: 'TH3WORM/TH3WORM_-_Pilot_Maneuver.mp3'},
     {src: 'TH3WORM/are_you_there.mp3'},
+    {src: 'TH3WORM/supreme_tranquility.mp3'},
     {src: 'TH3WORM/battle_for_the_network_state.mp3'},
     {src: 'TH3WORM/crypto_melt.mp3'},
     {src: 'TH3WORM/dark_dns.mp3'},
     {src: 'TH3WORM/shoot_to_kill_or_die.mp3'},
-    {src: 'TH3WORM/TH3WORM_-_Pilot_Maneuver.mp3'},
     {src: 'TH3WORM/th3worm_skeleton_crew.mp3'},
     {src: 'TH3WORM/we_came_here_to_die.mp3'}
 ];
