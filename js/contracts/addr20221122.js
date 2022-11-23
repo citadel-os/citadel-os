@@ -1,4 +1,4 @@
-const useTestnet = true; // testnet OR mainnet
+const useTestnet = false; // testnet OR mainnet
 
 export let CITADEL_NFT;
 export let CITADEL_EXORDIUM;
@@ -30,7 +30,7 @@ if (useTestnet) {
   CITADEL_DRAKMA = "0x927ce35c89ab901eefbc0675336ae4a31e658b0e";
   CITADEL_PILOT = "0xD653B9f4ec70658402B9634E7E0eAFcc64138Cad";
   CITADEL_BATCH = "";
-  SOVEREIGN_COLLECTIVE = "";
+  SOVEREIGN_COLLECTIVE = "0xc93aE64f0db8e68CF6aa05DEfeEE25b337eeC0DE";
   apiKey = "UcDDOYtVoT89tLIOD4POxzrhfvQAiHYO";
   alchemy = "eth-mainnet.alchemyapi.io"
   web3 = new Web3(`https://${alchemy}/v2/${apiKey}`);
