@@ -1,4 +1,4 @@
-import {web3, etherscan} from './contracts/addr20221122.js';
+import {web3, etherscan} from './contracts/addr20221123.js';
 
 //Global support functions
 export function showErrors(message) {
@@ -120,3 +120,5 @@ function truncAddr(addr, limit) {
 }
 
 export const availKults = ['kult geheim','d0d engel','stalkroth','kult gor','klinge','dalk stracht','ys diaboli','grater djevel'];
+export const dkScale = 1000000000000000000;
+
