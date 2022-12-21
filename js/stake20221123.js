@@ -260,7 +260,7 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   
   await typeWriter(`wallet: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(dk)} drakma`);
   await typeWriter(`unclaimed: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(unclaimedDK + calculatedDK)} drakma`);
-  await typeWriter(`approval: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(approvedDrakma)} dramka`);
+  await typeWriter(`approval: ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0, maximumSignificantDigits: 5}).format(approvedDrakma)} drakma`);
 
   return;
 }
