@@ -1,4 +1,4 @@
-import {web3, etherscan} from './contracts/addr20221123.js';
+import {web3, etherscan} from './contracts/addr20230104.js';
 
 //Global support functions
 export function showErrors(message) {

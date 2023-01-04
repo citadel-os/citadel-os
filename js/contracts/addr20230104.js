@@ -19,6 +19,7 @@ if (useTestnet) {
   CITADEL_PILOT = "0xd6858e5AE5c3546b8a144b75FD9E23bdeE45F030";
   CITADEL_BATCH = "0x2d36AfAa69b721240D70D65801F164826B983B35";
   SOVEREIGN_COLLECTIVE = "0x6825e0B01629bB940170c3AE0Dbe1eEAFE7E7240";
+  CITADEL_GAMEV1 = "0xb648E5460Fe6Cd5948FF93e9921215A5aD9D21aF";
   apiKey = "IfQOw2VsmU96YhYUF2ydine8Ah1l3mVl";
   alchemy = "eth-goerli.g.alchemy.com"
   web3 = new Web3(`https://${alchemy}/v2/${apiKey}`);
@@ -31,6 +32,7 @@ if (useTestnet) {
   CITADEL_PILOT = "0xD653B9f4ec70658402B9634E7E0eAFcc64138Cad";
   CITADEL_BATCH = "";
   SOVEREIGN_COLLECTIVE = "0xc93aE64f0db8e68CF6aa05DEfeEE25b337eeC0DE";
+  CITADEL_GAMEV1 = "";
   apiKey = "UcDDOYtVoT89tLIOD4POxzrhfvQAiHYO";
   alchemy = "eth-mainnet.alchemyapi.io"
   web3 = new Web3(`https://${alchemy}/v2/${apiKey}`);
