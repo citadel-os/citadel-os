@@ -1,5 +1,6 @@
 import * as stake from './stake20230104.js';
 import * as pilot from './pilot20230104.js';
+import * as gameV1 from './gamev120230104.js'
 import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20230104.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
@@ -96,7 +97,7 @@ register_cmd("cmd", function (cmd) {
     <tr><td>claim</td><td>claim pilot or drakma from staking</td></tr>
     <tr><td>overthrow</td><td>overthrow an incumbent sovereign</td></tr>
     <tr><td>sovereign</td><td>make your pilot sovereign on-chain</td></tr>
-    <tr><td>stake</td><td>stake your citadel to mine drakma</td></tr>
+    <tr><td>lite</td><td>lite your citadel to the grid</td></tr>
     <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
     <tr><td>withdraw</td><td>withdraw your citadel from staking</td></tr>
     </table>`;
@@ -147,62 +148,56 @@ register_cmd("approve", function (cmd) {
 
 followAlong[4] = '58a';
 
-// stake annexation, militant algorithms, 0 456 870
-register_cmd("stake", function (cmd) {
+// lite 40, 88 456 870, 512, annexation
+//lite citadelId, pilotIds, gridId, factionId
+register_cmd("lite", function (cmd) {
   var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '')
   console.debug(parameters);
 
-  var errorNotes = 'cmd usage: stake [faction], [tech to research], [space separated list fo citadel ids]';
+  var errorNotes = 'cmd usage: lite [citadelId], [space separated list of pilotIds], [gridId], [factionId]';
+  var sampleCitadel = '40';
+  var samplePilot = '88 456 870';
+  var sampleGrid = '512';
   var sampleFaction = 'annexation';
-  var sampleTech = 'militant algorithms';
-  var sampleCitadel = '88 456 870';
   var availFactions = ['annexation','autonomous zone','network state','sanction'];
-  var availTechs = ['preservative algorithms','militant algorithms','antimatter annihilation','propulsion','posthumanism','ecological extraction','technocracy','proginator psi'];
   
   //verify that we have three parameters for 'stake'
-  var inputErrors = (parameters.length != 3) ? true : false;
+  var inputErrors = (parameters.length != 4) ? true : false;
   if(inputErrors) { //just stop here if there's already an issue
     showErrors(errorNotes);
     return;
   }
 
   //verify that the provided faction is valid
-  if(parameters[0] && !availFactions.includes(parameters[0])) {
+  if(parameters[3] && !availFactions.includes(parameters[3])) {
     inputErrors = true;
     errorNotes = errorNotes.concat(`<br /><br />`,`faction must be one of the following:<br />
       ${availFactions.join('<br />')}`);
   } else {sampleFaction = parameters[0]};
- 
-  //verify that the provided tech is valid
-  if(parameters[1] && !availTechs.includes(parameters[1])) {
-    inputErrors = true;
-    errorNotes = errorNotes.concat(`<br /><br />`,`tech to research must be one of the following:<br />
-      ${availTechs.join('<br />')}`);
-  } else {sampleTech = parameters[1]};
 
-  //verify that the provided citadel(s) is/are valid
+  //verify that the provided pilotIds is valid
   if(parameters[2]) {
-    var citadelTokens = parameters[2].split(" ");
-    console.debug(citadelTokens);
-    if(!citadelTokens.every(element => {return !isNaN(element);})) {
+    var pilotTokens = parameters[1].split(" ");
+    console.debug(pilotTokens);
+    if(!pilotTokens.every(element => {return !isNaN(element);})) {
       inputErrors = true;
-      errorNotes = errorNotes.concat(`<br /><br />`,`citadels must be provided in a space-separated list`);
+      errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
     } else {
-      sampleCitadel = citadelTokens.join(' ')
+      samplePilot = pilotTokens.join(' ')
     };
   };
 
   //if any issues, dump our error list and exit
   if(inputErrors) {
-    errorNotes = errorNotes.concat(`<br /><br />`,`example: stake ${sampleFaction}, ${sampleTech}, ${sampleCitadel}`);
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: lite ${sampleCitadel}, ${samplePilot}, ${sampleGrid}, ${sampleFaction}`);
     showErrors(errorNotes);
     return;
   }
 
-  var techIndex = getTechIndex(parameters[0], parameters[1]);
-  console.debug(techIndex);
+  var factionIndex = getFactionIndex(parameters[3]);
+  console.debug(factionIndex);
 
-  stake.stake(citadelTokens, techIndex);
+  gameV1.liteGrid(parameters[0], pilotTokens, parameters[2], factionIndex);
 });
 
 followAlong[2] = '0feb6f31111973';
@@ -501,6 +496,19 @@ function getTechIndex(faction, tech) {
       return 16 + techIncrement;
     case "network state":
       return 24 + techIncrement;
+  }
+}
+
+function getFactionIndex(faction) {
+  switch(faction.toLowerCase()) {
+    case "annexation":
+      return 0;
+    case "autonomous zone":
+      return 1;
+    case "sanction":
+      return 2;
+    case "network state":
+      return 3;
   }
 }
 
