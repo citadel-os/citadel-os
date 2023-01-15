@@ -1,4 +1,4 @@
-const useTestnet = false; // testnet OR mainnet
+const useTestnet = true; // testnet OR mainnet
 
 export let CITADEL_NFT;
 export let CITADEL_EXORDIUM;
@@ -6,6 +6,7 @@ export let CITADEL_DRAKMA;
 export let CITADEL_PILOT;
 export let CITADEL_BATCH;
 export let SOVEREIGN_COLLECTIVE;
+export let CITADEL_GAMEV1;
 export let web3;
 export let etherscan;
 export let apiKey;

@@ -1,6 +1,6 @@
 import * as stake from './stake20230104.js';
 import * as pilot from './pilot20230104.js';
-import * as gameV1 from './gamev120230104.js'
+import * as gameV1 from './gameV120230104.js'
 import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20230104.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
@@ -91,7 +91,7 @@ register_cmd("cmd", function (cmd) {
   var cmdHelp = `<table class="cmd-help">
     <tr><th colspan="2">commands:</th></tr>
     <tr><td>about</td><td>learn about the game of citadel</td></tr>
-    <tr><td>approve</td><td>approve drakma or citadel</td></tr>
+    <tr><td>approve</td><td>approve drakma, citadel, pilot</td></tr>
     <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>check</td><td>check drakma balances or pilot stats</td></tr>
     <tr><td>claim</td><td>claim pilot or drakma from staking</td></tr>
@@ -112,9 +112,13 @@ register_cmd("approve", function (cmd) {
   var token = smart_split(cmd, " ", false).slice(1)[0];
   if(token === undefined) {
     showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br /><br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt] collective<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot [pilot number]<br />
       examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000 collective<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot 88<br />`);
     return;
   }
   
@@ -125,20 +129,20 @@ register_cmd("approve", function (cmd) {
         example:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
       return;
     }
-    stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
-  } else if (token == 'citadel') {
-    var citadelTokens = smart_split(cmd, " ", false).slice(2);
-    if(citadelTokens.length < 1 || !citadelTokens.every(element => {return !isNaN(element);})) {
-      showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel id]<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;approve citadel [space separated list fo citadel ids]<br /><br />
-        examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 123<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;approve citadel 88 456 870`);
-      return;
+    var sovereign = smart_split(cmd, " ", false).slice(3)[0];
+    if(sovereign === undefined) {
+      gameV1.approveDrakma(drakmaAmt).catch( e => console.log(e));
+    } else {
+      stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
     }
-    stake.approveCitadel(citadelTokens).catch( e => console.log(e)); //maybe make console.error later
+  } else if (token == 'citadel') {
+    var citadelToken = smart_split(cmd, " ", false).slice(2);
+    gameV1.approveCitadel(citadelToken).catch( e => console.log(e)); //maybe make console.error later
+  } else if (token == 'pilot') {
+    console.log("pilot");
   } else {
     showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br /><br />
+    &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
     examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
     &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
     return;
@@ -151,10 +155,10 @@ followAlong[4] = '58a';
 // lite 40, 88 456 870, 512, annexation
 //lite citadelId, pilotIds, gridId, factionId
 register_cmd("lite", function (cmd) {
-  var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '')
+  var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
   console.debug(parameters);
 
-  var errorNotes = 'cmd usage: lite [citadelId], [space separated list of pilotIds], [gridId], [factionId]';
+  var errorNotes = 'cmd usage: lite [citadelId], [space separated list of pilotIds], [gridId], [faction]';
   var sampleCitadel = '40';
   var samplePilot = '88 456 870';
   var sampleGrid = '512';
