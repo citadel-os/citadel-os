@@ -51,35 +51,59 @@ export async function approveDrakma(amt) {
     return txHash;
 }
 
-export async function approveCitadel(arrCitadel) {
+export async function approveCitadel() {
     const accounts = await getAccounts();
     if(accounts.length <= 0) {
       throw new Error("connect to metamask");
     }
   
-      var tokenId = arrCitadel[0];
+    const tx = {
+    'from': accounts[0],
+    'to': CITADEL_NFT,
+    'data': citadelNFT.methods.setApprovalForAll(CITADEL_GAMEV1, true).encodeABI()
+    };
+
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [tx],
+    }).then(result => {
+    showSuccess('approve tx complete',result)
+    },error => {
+    showErrors(error.message)
+    }).finally(() => {
+    spinner.stopSpinner()
+    });
+
+    return txHash;
+    
+  }
+
+export async function approvePilot() {
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+      throw new Error("connect to metamask");
+    }
   
-  //    const estimatedGas = await citadelNFT.methods.approve(CITADEL_EXORDIUM, tokenId).estimateGas({from: accounts[0]});
-  
-      const tx = {
-        'from': accounts[0],
-        'to': CITADEL_NFT,
-        'data': citadelNFT.methods.approve(CITADEL_GAMEV1, tokenId).encodeABI()
-        };
-  
-      spinner.startSpinner();
-      const txHash = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [tx],
-      }).then(result => {
-        showSuccess('approve tx complete',result)
-      },error => {
-        showErrors(error.message)
-      }).finally(() => {
-        spinner.stopSpinner()
-      });
-  
-      return txHash;
+    const tx = {
+    'from': accounts[0],
+    'to': CITADEL_PILOT,
+    'data': citadelPilot.methods.setApprovalForAll(CITADEL_GAMEV1, true).encodeABI()
+    };
+
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+    method: 'eth_sendTransaction',
+    params: [tx],
+    }).then(result => {
+    showSuccess('approve tx complete',result)
+    },error => {
+    showErrors(error.message)
+    }).finally(() => {
+    spinner.stopSpinner()
+    });
+
+    return txHash;
     
   }
 
@@ -92,7 +116,6 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
         throw new Error("connect to metamask");
     }
     
-    console.log(citadelId, pilotIds, gridId, factionId);
     const estimatedGas = await citadelGameV1.methods.liteGrid(citadelId, pilotIds, gridId, factionId).estimateGas({from: accounts[0]});
   
     const tx = {
@@ -118,4 +141,53 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     finally(() => {spinner.stopSpinner()});
   
     return txHash;
+  }
+
+  export async function dimGrid(citadelId) {
+    console.log("in dim")
+    var gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+  
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+        throw new Error("connect to metamask");
+    }
+    
+    const estimatedGas = await citadelGameV1.methods.dimGrid(citadelId).estimateGas({from: accounts[0]});
+  
+    const tx = {
+        'from': accounts[0],
+        'to': CITADEL_GAMEV1,
+        'data': citadelGameV1.methods.dimGrid(citadelId).encodeABI(),
+        'gas': web3.utils.toHex(estimatedGas),
+        'gasPrice': web3.utils.toHex(gasPrice)
+    };
+  
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+    })
+    .then(
+      result => {
+        showSuccess('dim grid',result)
+      },
+      error => {
+        showErrors(error.message)
+      }).
+    finally(() => {spinner.stopSpinner()});
+  
+    return txHash;
+  }
+
+async function calcGas({account, context, func, args = null}) {
+    let gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+    console.debug(`gasPrice: ${gasPrice}`);
+  
+    let estimatedGas = await context[func].apply(null,args?args:null).estimateGas({from: account})
+      .catch((error) => {throw new Error(error.message);});
+    console.debug(`estimatedGas: ${estimatedGas}`);
+  
+    return {gasPrice,estimatedGas};
   }

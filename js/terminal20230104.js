@@ -98,8 +98,8 @@ register_cmd("cmd", function (cmd) {
     <tr><td>overthrow</td><td>overthrow an incumbent sovereign</td></tr>
     <tr><td>sovereign</td><td>make your pilot sovereign on-chain</td></tr>
     <tr><td>lite</td><td>lite your citadel to the grid</td></tr>
+    <tr><td>dim</td><td>dim your citadel from the grid</td></tr>
     <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
-    <tr><td>withdraw</td><td>withdraw your citadel from staking</td></tr>
     </table>`;
   block_log(cmdHelp);
 });
@@ -111,14 +111,14 @@ register_cmd("clear", function (cmd) {
 register_cmd("approve", function (cmd) {
   var token = smart_split(cmd, " ", false).slice(1)[0];
   if(token === undefined) {
-    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
+    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
       &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
       &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt] collective<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot [pilot number]<br />
-      examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot<br />
+      examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
       &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />
       &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000 collective<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot 88<br />`);
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot`);
     return;
   }
   
@@ -136,14 +136,13 @@ register_cmd("approve", function (cmd) {
       stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
     }
   } else if (token == 'citadel') {
-    var citadelToken = smart_split(cmd, " ", false).slice(2);
-    gameV1.approveCitadel(citadelToken).catch( e => console.log(e)); //maybe make console.error later
+    gameV1.approveCitadel().catch( e => console.log(e)); //maybe make console.error later
   } else if (token == 'pilot') {
-    console.log("pilot");
+    gameV1.approvePilot().catch( e => console.log(e)); //maybe make console.error later
   } else {
-    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
+    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
     &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
-    examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
+    examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
     &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
     return;
   }
@@ -155,7 +154,7 @@ followAlong[4] = '58a';
 // lite 40, 88 456 870, 512, annexation
 //lite citadelId, pilotIds, gridId, factionId
 register_cmd("lite", function (cmd) {
-  var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
+  var parameters = cmd.replace('lite', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
   console.debug(parameters);
 
   var errorNotes = 'cmd usage: lite [citadelId], [space separated list of pilotIds], [gridId], [faction]';
@@ -260,6 +259,17 @@ register_cmd("withdraw", function (cmd) {
   }
 
   stake.withdraw(citadelTokens);
+});
+
+register_cmd("dim", function (cmd) {
+  var citadelToken = smart_split(cmd, " ", false).slice(1);
+  console.debug(citadelToken);
+  if(citadelToken.length < 1) {
+    showErrors("cmd usage:<br />dim 123<br />");
+    return;
+  }
+
+  gameV1.dimGrid(citadelToken[0]);
 });
 
 followAlong[3] = '36bc64ad3d0a123f22719d';
