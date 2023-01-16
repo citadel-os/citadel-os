@@ -131,7 +131,7 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     })
     .then(
       result => {
-        showSuccess('lit to grid',result)
+        showSuccess('lit to grid tx complete',result)
       },
       error => {
         showErrors(error.message)
@@ -167,7 +167,7 @@ export async function dimGrid(citadelId) {
     })
     .then(
       result => {
-        showSuccess('dim grid',result)
+        showSuccess('dim grid tx complete',result)
       },
       error => {
         showErrors(error.message)
@@ -203,7 +203,7 @@ export async function claim(citadelId) {
     })
     .then(
       result => {
-        showSuccess('claim',result)
+        showSuccess('claim tx complete',result)
       },
       error => {
         showErrors(error.message)
@@ -239,7 +239,7 @@ export async function trainFleet(citadelId, sifGattaca, mhrudvogThrot, drebentra
     })
     .then(
       result => {
-        showSuccess('train',result)
+        showSuccess('train tx complete',result)
       },
       error => {
         showErrors(error.message)
@@ -275,7 +275,7 @@ export async function sendRaid(fromCitadel, toCitadel, pilotTokens, sifGattaca, 
     })
     .then(
       result => {
-        showSuccess('raid',result)
+        showSuccess('raid tx complete',result)
       },
       error => {
         showErrors(error.message)
@@ -311,7 +311,7 @@ export async function resolveRaid(fromCitadel) {
     })
     .then(
       result => {
-        showSuccess('resolution',result)
+        showSuccess('resolution tx complete',result)
       },
       error => {
         showErrors(error.message)
