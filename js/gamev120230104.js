@@ -76,8 +76,7 @@ export async function approveCitadel() {
     });
 
     return txHash;
-    
-  }
+}
 
 export async function approvePilot() {
     const accounts = await getAccounts();
@@ -104,8 +103,7 @@ export async function approvePilot() {
     });
 
     return txHash;
-    
-  }
+}
 
 export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     var gasPrice = await getGasPrice();
@@ -117,7 +115,7 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     }
     
     const estimatedGas = await citadelGameV1.methods.liteGrid(citadelId, pilotIds, gridId, factionId).estimateGas({from: accounts[0]});
-  
+
     const tx = {
         'from': accounts[0],
         'to': CITADEL_GAMEV1,
@@ -141,10 +139,9 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     finally(() => {spinner.stopSpinner()});
   
     return txHash;
-  }
+}
 
-  export async function dimGrid(citadelId) {
-    console.log("in dim")
+export async function dimGrid(citadelId) {
     var gasPrice = await getGasPrice();
     gasPrice = Math.trunc(gasPrice * 1.5);
   
@@ -178,16 +175,158 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     finally(() => {spinner.stopSpinner()});
   
     return txHash;
-  }
+}
+
+export async function claim(citadelId) {
+    var gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+  
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+        throw new Error("connect to metamask");
+    }
+    
+    const estimatedGas = await citadelGameV1.methods.claim(citadelId).estimateGas({from: accounts[0]});
+  
+    const tx = {
+        'from': accounts[0],
+        'to': CITADEL_GAMEV1,
+        'data': citadelGameV1.methods.claim(citadelId).encodeABI(),
+        'gas': web3.utils.toHex(estimatedGas),
+        'gasPrice': web3.utils.toHex(gasPrice)
+    };
+  
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+    })
+    .then(
+      result => {
+        showSuccess('claim',result)
+      },
+      error => {
+        showErrors(error.message)
+      }).
+    finally(() => {spinner.stopSpinner()});
+  
+    return txHash;
+}
+
+export async function trainFleet(citadelId, sifGattaca, mhrudvogThrot, drebentraakht) {
+    var gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+  
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+        throw new Error("connect to metamask");
+    }
+    
+    const estimatedGas = await citadelGameV1.methods.trainFleet(citadelId, sifGattaca, mhrudvogThrot, drebentraakht).estimateGas({from: accounts[0]});
+  
+    const tx = {
+        'from': accounts[0],
+        'to': CITADEL_GAMEV1,
+        'data': citadelGameV1.methods.trainFleet(citadelId, sifGattaca, mhrudvogThrot, drebentraakht).encodeABI(),
+        'gas': web3.utils.toHex(estimatedGas),
+        'gasPrice': web3.utils.toHex(gasPrice)
+    };
+  
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+    })
+    .then(
+      result => {
+        showSuccess('train',result)
+      },
+      error => {
+        showErrors(error.message)
+      }).
+    finally(() => {spinner.stopSpinner()});
+  
+    return txHash;
+}
+
+export async function sendRaid(fromCitadel, toCitadel, pilotTokens, sifGattaca, mhrudvogThrot, drebentraakht) {
+    var gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+  
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+        throw new Error("connect to metamask");
+    }
+    
+    const estimatedGas = await citadelGameV1.methods.sendRaid(fromCitadel, toCitadel, pilotTokens, sifGattaca, mhrudvogThrot, drebentraakht).estimateGas({from: accounts[0]});
+
+    const tx = {
+        'from': accounts[0],
+        'to': CITADEL_GAMEV1,
+        'data': citadelGameV1.methods.sendRaid(fromCitadel, toCitadel, pilotTokens, sifGattaca, mhrudvogThrot, drebentraakht).encodeABI(),
+        'gas': web3.utils.toHex(estimatedGas),
+        'gasPrice': web3.utils.toHex(gasPrice)
+    };
+  
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+    })
+    .then(
+      result => {
+        showSuccess('raid',result)
+      },
+      error => {
+        showErrors(error.message)
+      }).
+    finally(() => {spinner.stopSpinner()});
+  
+    return txHash;
+}
+
+export async function resolveRaid(fromCitadel) {
+    var gasPrice = await getGasPrice();
+    gasPrice = Math.trunc(gasPrice * 1.5);
+  
+    const accounts = await getAccounts();
+    if(accounts.length <= 0) {
+        throw new Error("connect to metamask");
+    }
+    
+    const estimatedGas = await citadelGameV1.methods.resolveRaid(fromCitadel).estimateGas({from: accounts[0]});
+
+    const tx = {
+        'from': accounts[0],
+        'to': CITADEL_GAMEV1,
+        'data': citadelGameV1.methods.sendRaid(fromCitadel).encodeABI(),
+        'gas': web3.utils.toHex(estimatedGas),
+        'gasPrice': web3.utils.toHex(gasPrice)
+    };
+  
+    spinner.startSpinner();
+    const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+    })
+    .then(
+      result => {
+        showSuccess('resolution',result)
+      },
+      error => {
+        showErrors(error.message)
+      }).
+    finally(() => {spinner.stopSpinner()});
+  
+    return txHash;
+}
 
 async function calcGas({account, context, func, args = null}) {
     let gasPrice = await getGasPrice();
     gasPrice = Math.trunc(gasPrice * 1.5);
-    console.debug(`gasPrice: ${gasPrice}`);
   
     let estimatedGas = await context[func].apply(null,args?args:null).estimateGas({from: account})
       .catch((error) => {throw new Error(error.message);});
-    console.debug(`estimatedGas: ${estimatedGas}`);
   
     return {gasPrice,estimatedGas};
-  }
+}

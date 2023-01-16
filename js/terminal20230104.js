@@ -91,15 +91,25 @@ register_cmd("cmd", function (cmd) {
   var cmdHelp = `<table class="cmd-help">
     <tr><th colspan="2">commands:</th></tr>
     <tr><td>about</td><td>learn about the game of citadel</td></tr>
-    <tr><td>approve</td><td>approve drakma, citadel, pilot</td></tr>
-    <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>check</td><td>check drakma balances or pilot stats</td></tr>
-    <tr><td>claim</td><td>claim pilot or drakma from staking</td></tr>
+
+    <tr><td colspan="2">&nbsp</th></tr>
+    <tr><th colspan="2">sovereign collective:</th></tr>
+    <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>overthrow</td><td>overthrow an incumbent sovereign</td></tr>
     <tr><td>sovereign</td><td>make your pilot sovereign on-chain</td></tr>
+    <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
+
+    <tr><td colspan="2">&nbsp</th></tr>
+    <tr><th colspan="2">game commands:</th></tr>
+    <tr><td>approve</td><td>approve assets for game contract</td></tr>
     <tr><td>lite</td><td>lite your citadel to the grid</td></tr>
     <tr><td>dim</td><td>dim your citadel from the grid</td></tr>
-    <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
+    <tr><td>claim</td><td>claim drakma from mining & raiding</td></tr>
+    <tr><td>raid</td><td>raid a citadel lit to grid</td></tr>
+    <tr><td>train</td><td>train fleet</td></tr>
+    <tr><td>resolve</td><td>resolve a raid</td></tr>
+    
     </table>`;
   block_log(cmdHelp);
 });
@@ -164,7 +174,7 @@ register_cmd("lite", function (cmd) {
   var sampleFaction = 'annexation';
   var availFactions = ['annexation','autonomous zone','network state','sanction'];
   
-  //verify that we have three parameters for 'stake'
+  //verify that we have three parameters for 'lite'
   var inputErrors = (parameters.length != 4) ? true : false;
   if(inputErrors) { //just stop here if there's already an issue
     showErrors(errorNotes);
@@ -179,16 +189,11 @@ register_cmd("lite", function (cmd) {
   } else {sampleFaction = parameters[0]};
 
   //verify that the provided pilotIds is valid
-  if(parameters[2]) {
-    var pilotTokens = parameters[1].split(" ");
-    console.debug(pilotTokens);
-    if(!pilotTokens.every(element => {return !isNaN(element);})) {
-      inputErrors = true;
-      errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
-    } else {
-      samplePilot = pilotTokens.join(' ')
-    };
-  };
+  var pilotTokens = parameters[1].split(" ");
+  if(!pilotTokens.every(element => {return !isNaN(element);})) {
+    inputErrors = true;
+    errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
+  }
 
   //if any issues, dump our error list and exit
   if(inputErrors) {
@@ -206,19 +211,19 @@ register_cmd("lite", function (cmd) {
 followAlong[2] = '0feb6f31111973';
 
 register_cmd("claim", function (cmd) {
-  //This will now account for Drakma OR Pilot
+  //This will now account for drakma or pilot
   var claimCmd = smart_split(cmd.toLowerCase(), " ", false).slice(1);
-  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
+  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma [citadelId]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
   var inputErrors = false;
 
   switch (claimCmd[0]) {
     case 'drakma':
-      if (claimCmd.length == 1) {
-        stake.claimDrakma();
+      if (claimCmd.length == 2) {
+        gameV1.claim(claimCmd[1]);
         return;
       } else {
         inputErrors = true;
-        errorNotes = errorNotes.concat(`<br /><br />`,`example: claim drakma`);
+        errorNotes = errorNotes.concat(`<br /><br />`,`example: claim drakma [citadelId]`);
       }
       break;
     case 'pilot':
@@ -271,6 +276,75 @@ register_cmd("dim", function (cmd) {
 
   gameV1.dimGrid(citadelToken[0]);
 });
+
+
+register_cmd("raid", function (cmd) {
+  var parameters = cmd.replace('raid', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
+
+  var errorNotes = 'cmd usage: raid [fromCitadelId], [toCitadelId], [space separated list of pilotIds], [# sif gattaca], [# mhrudvog throt], [# drebentraakht]';
+  var sampleCitadel1 = '40';
+  var sampleCitadel2 = '800';
+  var samplePilot = '88 456 870';
+  var sampleFleet = '500';
+  
+  //verify that we have six parameters for 'raid'
+  var inputErrors = (parameters.length != 6) ? true : false;
+  if(inputErrors) { //just stop here if there's already an issue
+    showErrors(errorNotes);
+    return;
+  }
+
+  //verify that the provided pilotIds is valid
+  var pilotTokens = parameters[2].split(" ");
+  if(!pilotTokens.every(element => {return !isNaN(element);})) {
+    inputErrors = true;
+    errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
+  }
+
+  //if any issues, dump our error list and exit
+  if(inputErrors) {
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: raid ${sampleCitadel1}, ${sampleCitadel2}, ${samplePilot}, ${sampleFleet}, ${sampleFleet}, ${sampleFleet}`);
+    showErrors(errorNotes);
+    return;
+  }
+
+  gameV1.sendRaid(parameters[0], parameters[1], pilotTokens, parameters[3], parameters[4], parameters[5]);
+});
+
+register_cmd("resolve", function (cmd) {
+  var fromCitadelId = smart_split(cmd, " ", false).slice(1);
+  if(fromCitadelId.length < 1) {
+    showErrors("cmd usage:<br />resolve [fromCitadelId]<br />resolve 88");
+    return;
+  }
+
+  gameV1.resolveRaid(fromCitadelId[0]);
+});
+
+register_cmd("train", function (cmd) {
+  var parameters = cmd.replace('train', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
+
+  var errorNotes = 'cmd usage: train [citadelId], [# sif gattaca], [# mhrudvog throt], [# drebentraakht]';
+  var sampleCitadel = '40';
+  var sampleFleet = '500';
+  
+  //verify that we have four parameters for 'train'
+  var inputErrors = (parameters.length != 4) ? true : false;
+  if(inputErrors) { //just stop here if there's already an issue
+    showErrors(errorNotes);
+    return;
+  }
+
+  //if any issues, dump our error list and exit
+  if(inputErrors) {
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: train ${sampleCitadel}, ${samplePilot}, ${sampleFleet}, ${sampleFleet}, ${sampleFleet}`);
+    showErrors(errorNotes);
+    return;
+  }
+
+  gameV1.trainFleet(parameters[0], parameters[1], parameters[2], parameters[3]);
+});
+
 
 followAlong[3] = '36bc64ad3d0a123f22719d';
 
