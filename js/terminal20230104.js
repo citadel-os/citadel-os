@@ -1,6 +1,7 @@
-import * as stake from './stake20221123.js';
-import * as pilot from './pilot20221123.js';
-import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20221123.js';
+import * as stake from './stake20230104.js';
+import * as pilot from './pilot20230104.js';
+import * as gameV1 from './gameV120230104.js'
+import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20230104.js';
 
 export var cmdText = "type `cmd` for a list of commands.";
 var cmdLog = [];
@@ -90,15 +91,25 @@ register_cmd("cmd", function (cmd) {
   var cmdHelp = `<table class="cmd-help">
     <tr><th colspan="2">commands:</th></tr>
     <tr><td>about</td><td>learn about the game of citadel</td></tr>
-    <tr><td>approve</td><td>approve drakma or citadel</td></tr>
-    <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>check</td><td>check drakma balances or pilot stats</td></tr>
-    <tr><td>claim</td><td>claim pilot or drakma from staking</td></tr>
+
+    <tr><td colspan="2">&nbsp</th></tr>
+    <tr><th colspan="2">sovereign collective:</th></tr>
+    <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>overthrow</td><td>overthrow an incumbent sovereign</td></tr>
     <tr><td>sovereign</td><td>make your pilot sovereign on-chain</td></tr>
-    <tr><td>stake</td><td>stake your citadel to mine drakma</td></tr>
     <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
-    <tr><td>withdraw</td><td>withdraw your citadel from staking</td></tr>
+
+    <tr><td colspan="2">&nbsp</th></tr>
+    <tr><th colspan="2">game commands:</th></tr>
+    <tr><td>approve</td><td>approve assets for game contract</td></tr>
+    <tr><td>lite</td><td>lite your citadel to the grid</td></tr>
+    <tr><td>dim</td><td>dim your citadel from the grid</td></tr>
+    <tr><td>claim</td><td>claim drakma from mining & raiding</td></tr>
+    <tr><td>raid</td><td>raid a citadel lit to grid</td></tr>
+    <tr><td>train</td><td>train fleet</td></tr>
+    <tr><td>resolve</td><td>resolve a raid</td></tr>
+    
     </table>`;
   block_log(cmdHelp);
 });
@@ -110,10 +121,14 @@ register_cmd("clear", function (cmd) {
 register_cmd("approve", function (cmd) {
   var token = smart_split(cmd, " ", false).slice(1)[0];
   if(token === undefined) {
-    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br /><br />
-      examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
+    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt] collective<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot<br />
+      examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000 collective<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;approve pilot`);
     return;
   }
   
@@ -124,21 +139,20 @@ register_cmd("approve", function (cmd) {
         example:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
       return;
     }
-    stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
-  } else if (token == 'citadel') {
-    var citadelTokens = smart_split(cmd, " ", false).slice(2);
-    if(citadelTokens.length < 1 || !citadelTokens.every(element => {return !isNaN(element);})) {
-      showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel id]<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;approve citadel [space separated list fo citadel ids]<br /><br />
-        examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 123<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;approve citadel 88 456 870`);
-      return;
+    var sovereign = smart_split(cmd, " ", false).slice(3)[0];
+    if(sovereign === undefined) {
+      gameV1.approveDrakma(drakmaAmt).catch( e => console.log(e));
+    } else {
+      stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
     }
-    stake.approveCitadel(citadelTokens).catch( e => console.log(e)); //maybe make console.error later
+  } else if (token == 'citadel') {
+    gameV1.approveCitadel().catch( e => console.log(e)); //maybe make console.error later
+  } else if (token == 'pilot') {
+    gameV1.approvePilot().catch( e => console.log(e)); //maybe make console.error later
   } else {
-    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel [citadel number]<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br /><br />
-    examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel 500<br />
+    showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
+    examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
     &nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
     return;
   }
@@ -147,80 +161,69 @@ register_cmd("approve", function (cmd) {
 
 followAlong[4] = '58a';
 
-// stake annexation, militant algorithms, 0 456 870
-register_cmd("stake", function (cmd) {
-  var parameters = cmd.replace('stake', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '')
+// lite 40, 88 456 870, 512, annexation
+//lite citadelId, pilotIds, gridId, factionId
+register_cmd("lite", function (cmd) {
+  var parameters = cmd.replace('lite', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
   console.debug(parameters);
 
-  var errorNotes = 'cmd usage: stake [faction], [tech to research], [space separated list fo citadel ids]';
+  var errorNotes = 'cmd usage: lite [citadelId], [space separated list of pilotIds], [gridId], [faction]';
+  var sampleCitadel = '40';
+  var samplePilot = '88 456 870';
+  var sampleGrid = '512';
   var sampleFaction = 'annexation';
-  var sampleTech = 'militant algorithms';
-  var sampleCitadel = '88 456 870';
   var availFactions = ['annexation','autonomous zone','network state','sanction'];
-  var availTechs = ['preservative algorithms','militant algorithms','antimatter annihilation','propulsion','posthumanism','ecological extraction','technocracy','proginator psi'];
   
-  //verify that we have three parameters for 'stake'
-  var inputErrors = (parameters.length != 3) ? true : false;
+  //verify that we have three parameters for 'lite'
+  var inputErrors = (parameters.length != 4) ? true : false;
   if(inputErrors) { //just stop here if there's already an issue
     showErrors(errorNotes);
     return;
   }
 
   //verify that the provided faction is valid
-  if(parameters[0] && !availFactions.includes(parameters[0])) {
+  if(parameters[3] && !availFactions.includes(parameters[3])) {
     inputErrors = true;
     errorNotes = errorNotes.concat(`<br /><br />`,`faction must be one of the following:<br />
       ${availFactions.join('<br />')}`);
   } else {sampleFaction = parameters[0]};
- 
-  //verify that the provided tech is valid
-  if(parameters[1] && !availTechs.includes(parameters[1])) {
-    inputErrors = true;
-    errorNotes = errorNotes.concat(`<br /><br />`,`tech to research must be one of the following:<br />
-      ${availTechs.join('<br />')}`);
-  } else {sampleTech = parameters[1]};
 
-  //verify that the provided citadel(s) is/are valid
-  if(parameters[2]) {
-    var citadelTokens = parameters[2].split(" ");
-    console.debug(citadelTokens);
-    if(!citadelTokens.every(element => {return !isNaN(element);})) {
-      inputErrors = true;
-      errorNotes = errorNotes.concat(`<br /><br />`,`citadels must be provided in a space-separated list`);
-    } else {
-      sampleCitadel = citadelTokens.join(' ')
-    };
-  };
+  //verify that the provided pilotIds is valid
+  var pilotTokens = parameters[1].split(" ");
+  if(!pilotTokens.every(element => {return !isNaN(element);})) {
+    inputErrors = true;
+    errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
+  }
 
   //if any issues, dump our error list and exit
   if(inputErrors) {
-    errorNotes = errorNotes.concat(`<br /><br />`,`example: stake ${sampleFaction}, ${sampleTech}, ${sampleCitadel}`);
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: lite ${sampleCitadel}, ${samplePilot}, ${sampleGrid}, ${sampleFaction}`);
     showErrors(errorNotes);
     return;
   }
 
-  var techIndex = getTechIndex(parameters[0], parameters[1]);
-  console.debug(techIndex);
+  var factionIndex = getFactionIndex(parameters[3]);
+  console.debug(factionIndex);
 
-  stake.stake(citadelTokens, techIndex);
+  gameV1.liteGrid(parameters[0], pilotTokens, parameters[2], factionIndex);
 });
 
 followAlong[2] = '0feb6f31111973';
 
 register_cmd("claim", function (cmd) {
-  //This will now account for Drakma OR Pilot
+  //This will now account for drakma or pilot
   var claimCmd = smart_split(cmd.toLowerCase(), " ", false).slice(1);
-  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
+  var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma [citadelId]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
   var inputErrors = false;
 
   switch (claimCmd[0]) {
     case 'drakma':
-      if (claimCmd.length == 1) {
-        stake.claimDrakma();
+      if (claimCmd.length == 2) {
+        gameV1.claim(claimCmd[1]);
         return;
       } else {
         inputErrors = true;
-        errorNotes = errorNotes.concat(`<br /><br />`,`example: claim drakma`);
+        errorNotes = errorNotes.concat(`<br /><br />`,`example: claim drakma [citadelId]`);
       }
       break;
     case 'pilot':
@@ -262,6 +265,86 @@ register_cmd("withdraw", function (cmd) {
 
   stake.withdraw(citadelTokens);
 });
+
+register_cmd("dim", function (cmd) {
+  var citadelToken = smart_split(cmd, " ", false).slice(1);
+  console.debug(citadelToken);
+  if(citadelToken.length < 1) {
+    showErrors("cmd usage:<br />dim 123<br />");
+    return;
+  }
+
+  gameV1.dimGrid(citadelToken[0]);
+});
+
+
+register_cmd("raid", function (cmd) {
+  var parameters = cmd.replace('raid', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
+
+  var errorNotes = 'cmd usage: raid [fromCitadelId], [toCitadelId], [space separated list of pilotIds], [# sif gattaca], [# mhrudvog throt], [# drebentraakht]';
+  var sampleCitadel1 = '40';
+  var sampleCitadel2 = '800';
+  var samplePilot = '88 456 870';
+  var sampleFleet = '500';
+  
+  //verify that we have six parameters for 'raid'
+  var inputErrors = (parameters.length != 6) ? true : false;
+  if(inputErrors) { //just stop here if there's already an issue
+    showErrors(errorNotes);
+    return;
+  }
+
+  //verify that the provided pilotIds is valid
+  var pilotTokens = parameters[2].split(" ");
+  if(!pilotTokens.every(element => {return !isNaN(element);})) {
+    inputErrors = true;
+    errorNotes = errorNotes.concat(`<br /><br />`,`pilots must be provided in a space-separated list`);
+  }
+
+  //if any issues, dump our error list and exit
+  if(inputErrors) {
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: raid ${sampleCitadel1}, ${sampleCitadel2}, ${samplePilot}, ${sampleFleet}, ${sampleFleet}, ${sampleFleet}`);
+    showErrors(errorNotes);
+    return;
+  }
+
+  gameV1.sendRaid(parameters[0], parameters[1], pilotTokens, parameters[3], parameters[4], parameters[5]);
+});
+
+register_cmd("resolve", function (cmd) {
+  var fromCitadelId = smart_split(cmd, " ", false).slice(1);
+  if(fromCitadelId.length < 1) {
+    showErrors("cmd usage:<br />resolve [fromCitadelId]<br />resolve 88");
+    return;
+  }
+
+  gameV1.resolveRaid(fromCitadelId[0]);
+});
+
+register_cmd("train", function (cmd) {
+  var parameters = cmd.replace('train', '').split(/[,]/).map(element => element.trim().toLowerCase()).filter(element => element !== '');
+
+  var errorNotes = 'cmd usage: train [citadelId], [# sif gattaca], [# mhrudvog throt], [# drebentraakht]';
+  var sampleCitadel = '40';
+  var sampleFleet = '500';
+  
+  //verify that we have four parameters for 'train'
+  var inputErrors = (parameters.length != 4) ? true : false;
+  if(inputErrors) { //just stop here if there's already an issue
+    showErrors(errorNotes);
+    return;
+  }
+
+  //if any issues, dump our error list and exit
+  if(inputErrors) {
+    errorNotes = errorNotes.concat(`<br /><br />`,`example: train ${sampleCitadel}, ${samplePilot}, ${sampleFleet}, ${sampleFleet}, ${sampleFleet}`);
+    showErrors(errorNotes);
+    return;
+  }
+
+  gameV1.trainFleet(parameters[0], parameters[1], parameters[2], parameters[3]);
+});
+
 
 followAlong[3] = '36bc64ad3d0a123f22719d';
 
@@ -501,6 +584,19 @@ function getTechIndex(faction, tech) {
       return 16 + techIncrement;
     case "network state":
       return 24 + techIncrement;
+  }
+}
+
+function getFactionIndex(faction) {
+  switch(faction.toLowerCase()) {
+    case "annexation":
+      return 0;
+    case "autonomous zone":
+      return 1;
+    case "sanction":
+      return 2;
+    case "network state":
+      return 3;
   }
 }
 
