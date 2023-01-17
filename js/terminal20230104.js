@@ -1,6 +1,6 @@
 import * as stake from './stake20230104.js';
 import * as pilot from './pilot20230104.js';
-import * as gameV1 from './gameV120230104.js'
+import * as gameV1 from './gamev120230104.js'
 import {availKults, showErrors, smart_split, new_block, clear, block_log, ofInterest} from './common20230104.js';
 
 export var cmdText = "type `cmd` for a list of commands.";

@@ -131,7 +131,7 @@ export async function liteGrid(citadelId, pilotIds, gridId, factionId) {
     })
     .then(
       result => {
-        showSuccess('lit to grid tx complete',result)
+        showSuccess('lite to grid tx complete',result)
       },
       error => {
         showErrors(error.message)
