@@ -299,7 +299,7 @@ export async function resolveRaid(fromCitadel) {
     const tx = {
         'from': accounts[0],
         'to': CITADEL_GAMEV1,
-        'data': citadelGameV1.methods.sendRaid(fromCitadel).encodeABI(),
+        'data': citadelGameV1.methods.resolveRaid(fromCitadel).encodeABI(),
         'gas': web3.utils.toHex(estimatedGas),
         'gasPrice': web3.utils.toHex(gasPrice)
     };
