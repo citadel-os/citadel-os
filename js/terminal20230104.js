@@ -91,7 +91,10 @@ register_cmd("cmd", function (cmd) {
   var cmdHelp = `<table class="cmd-help">
     <tr><th colspan="2">commands:</th></tr>
     <tr><td>about</td><td>learn about the game of citadel</td></tr>
+    <tr><td>approve</td><td>approve drakma, citadel, pilot</td></tr>
+    <tr><td>bribe</td><td>buy the loyalty of your kult</td></tr>
     <tr><td>check</td><td>check drakma balances or pilot stats</td></tr>
+    <tr><td>claim</td><td>claim pilot or drakma from staking</td></tr>
 
     <tr><td colspan="2">&nbsp</th></tr>
     <tr><th colspan="2">sovereign collective:</th></tr>
@@ -99,16 +102,6 @@ register_cmd("cmd", function (cmd) {
     <tr><td>overthrow</td><td>overthrow an incumbent sovereign</td></tr>
     <tr><td>sovereign</td><td>make your pilot sovereign on-chain</td></tr>
     <tr><td>uplevel</td><td>uplevel your pilot on-chain</td></tr>
-
-    <tr><td colspan="2">&nbsp</th></tr>
-    <tr><th colspan="2">game commands:</th></tr>
-    <tr><td>approve</td><td>approve assets for game contract</td></tr>
-    <tr><td>lite</td><td>lite your citadel to the grid</td></tr>
-    <tr><td>dim</td><td>dim your citadel from the grid</td></tr>
-    <tr><td>claim</td><td>claim drakma from mining & raiding</td></tr>
-    <tr><td>raid</td><td>raid a citadel lit to grid</td></tr>
-    <tr><td>train</td><td>train fleet</td></tr>
-    <tr><td>resolve</td><td>resolve a raid</td></tr>
     
     </table>`;
   block_log(cmdHelp);
