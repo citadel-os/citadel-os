@@ -235,7 +235,7 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
 
   const rewardsPerHour = 166000000000000000000; //166 DK base / hr
   const periodFinish = 1674943200; //JAN 28 2023, 2PM PT   
-  let dk = await citadelDrakma.methods.balanceOf(useWallet).call().then(Number());
+  let dk = await citadelDrakma.methods.balanceOf(useWallet).call().then((result) => {return Number(result)});
   dk = (dk?(dk/dkScale):0);
 
   spinner.startSpinner();
@@ -243,14 +243,14 @@ export async function checkDrakma(walletAddress = null) { // Does not (always) r
   const stakerInfo = await citadelExordium.methods.stakers(useWallet).call();
   let unclaimedDK = Number(stakerInfo.unclaimedRewards);
   unclaimedDK = (unclaimedDK?(unclaimedDK/dkScale):0);
-  const lastUpdate = stakerInfo.timeOfLastUpdate;
-  const amtStaked = stakerInfo.amountStaked;
+  const lastUpdate = Number(stakerInfo.timeOfLastUpdate);
+  const amtStaked = Number(stakerInfo.amountStaked);
 
-  const currBlock = await web3.eth.getBlock(await web3.eth.getBlockNumber())
-  let calculatedDK = Number(((currBlock.timestamp < periodFinish ? currBlock.timestamp : periodFinish) - lastUpdate) * amtStaked * rewardsPerHour / 3600)
+  const currBlock = await web3.eth.getBlock(await web3.eth.getBlockNumber());
+  let calculatedDK = Number(((Number(currBlock.timestamp) < periodFinish ? Number(currBlock.timestamp) : periodFinish) - lastUpdate) * amtStaked * rewardsPerHour / 3600)
   calculatedDK = (calculatedDK?(calculatedDK/dkScale):0);
 
-  let approvedDrakma = await citadelDrakma.methods.allowance(useWallet,CITADEL_PILOT).call().then((dk) => {return dk;});
+  let approvedDrakma = await citadelDrakma.methods.allowance(useWallet,CITADEL_PILOT).call().then((dk) => {return Number(dk);});
   approvedDrakma = (approvedDrakma?(approvedDrakma/dkScale):0);
 
   spinner.stopSpinner();
@@ -323,7 +323,7 @@ export async function checkWallet(walletAddress = null) { // Does not (always) r
 //         This probably needs to be done server-side, could 'just' be written to local (json) file after
 //         For not, just a flag, whether the wallet has staked citadel
   let stakedCitadel = await getStakerInfo(useWallet);
-  if (!isNaN(stakedCitadel[0]) && stakedCitadel[0] > 0) {showSuccess(`wallet owns staked citadel`)};
+  if (!isNaN(Number(stakedCitadel[0])) && Number(stakedCitadel[0]) > 0) {showSuccess(`wallet owns staked citadel`)};
 
 // Unstaked Citadel ids
   const options = {

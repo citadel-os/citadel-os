@@ -64,7 +64,7 @@ export async function getAccounts() {
 
 export async function getGasPrice() {
   const price = await web3.eth.getGasPrice();
-  return price;
+  return Number(price);
 }
 
 var current_block;

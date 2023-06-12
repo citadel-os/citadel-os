@@ -215,7 +215,7 @@ register_cmd("claim", function (cmd) {
   var claimCmd = smart_split(cmd.toLowerCase(), " ", false).slice(1);
   var errorNotes = 'cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;claim drakma [citadelId]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim pilot [citadel id]<br />&nbsp;&nbsp;&nbsp;&nbsp;claim sovereign [sovereign id]';
   var inputErrors = false;
-
+//console.log(claimCmd)
   switch (claimCmd[0]) {
     case 'drakma':
       if (claimCmd.length == 2) {

@@ -288,7 +288,7 @@ export async function claimSovereign(sovereignId) {
   };
 
   spinner.startSpinner();
-  await sovereignCollective.methods.getClaimAmount().call().then((out) => {showSuccess(`claiming ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(out / dkScale)} drakma`);});
+  await sovereignCollective.methods.getClaimAmount().call().then((out) => {showSuccess(`claiming ${new Intl.NumberFormat('en-US', {maximumFractionDigits: 0}).format(Number(out) / dkScale)} drakma`);});
   const txHash = await window.ethereum.request({
     method: 'eth_sendTransaction',
     params: [tx],
