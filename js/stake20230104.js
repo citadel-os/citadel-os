@@ -187,7 +187,7 @@ export async function approveDrakma(amt) {
     throw new Error("connect to metamask");
   }
 
-  var amtWei = web3.utils.toWei(amt.toString());
+  var amtWei = web3.utils.toWei(amt.toString(),'ether');
 
   let gas = {}
   try {gas = await calcGas({
