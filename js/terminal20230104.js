@@ -132,17 +132,14 @@ register_cmd("approve", function (cmd) {
         example:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve drakma 64000<br />`);
       return;
     }
-    var sovereign = smart_split(cmd, " ", false).slice(3)[0];
-    if(sovereign === undefined) {
-      gameV1.approveDrakma(drakmaAmt).catch( e => console.log(e));
-    } else {
-      stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
-    }
+
+    stake.approveDrakma(drakmaAmt).catch( e => console.log(e)); //maybe make console.error later
   } else if (token == 'citadel') {
     gameV1.approveCitadel().catch( e => console.log(e)); //maybe make console.error later
   } else if (token == 'pilot') {
     gameV1.approvePilot().catch( e => console.log(e)); //maybe make console.error later
   } else {
+
     showErrors(`cmd usage:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
     &nbsp;&nbsp;&nbsp;&nbsp;approve drakma [amt]<br />
     examples:<br />&nbsp;&nbsp;&nbsp;&nbsp;approve citadel<br />
